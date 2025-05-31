@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameEntryPoint : MonoBehaviour
 {
@@ -11,18 +10,12 @@ public class GameEntryPoint : MonoBehaviour
     private GameFieldController _fieldController;
     private GameController _gameController;
     
+    public static Action Restart;
+    
     private void Start()
     {
         Init();
-        GameView.Restart += Restart;
     }
-
-    private void OnDestroy()
-    {
-        GameView.Restart -= Restart;
-    }
-
-    private void Restart() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     
     private void Init()
     {

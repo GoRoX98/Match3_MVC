@@ -18,8 +18,13 @@ public class GameFieldController : Controller
     
     public event Action<int> OnElementClick;
     
-    // Инициализируем контроллер, прокидывает событие для реагирования на клик, инициализируем вьюху, прокидываем элементы по линиям
-    // Инициализируем сервисы
+    /// <summary>
+    /// Инициализируем контроллер, прокидываем событие для реагирования на клик, инициализируем вьюху, прокидываем элементы по линиям
+    /// </summary>
+    /// <param name="model">Модель игрового поля</param>
+    /// <param name="view"> View игрового поля</param>
+    /// <param name="data"> Данные уровня</param>
+    /// <param name="gameProcess">Сервис игрового процесса</param>
     public GameFieldController(GameFieldModel model, GameFieldView view, LevelData data, GameProcess gameProcess) : base(model, view)
     {
         _gameProcess = gameProcess;
@@ -31,8 +36,17 @@ public class GameFieldController : Controller
         _gfView.Init(_data, OnElementClick);
         
         _analyzer = new AnalyzeMatch();
+        GameEntryPoint.Restart += RestartGame;
+        view.ElementViewCreate += NewElement;
+        view.ElementViewDestroy += DestroyElement;
+        view.LineViewCreate += CreateLine;
     }
-    
+
+    private void RestartGame()
+    {
+        throw new NotImplementedException();
+    }
+
     // Обработка нажатия на элемента
     private void ElementClick(int id)
     {
@@ -47,7 +61,7 @@ public class GameFieldController : Controller
         {
             int line = (int)position.x;
             int row = (int)position.y;
-            _gfView.ElementsPool.Release(_gfView.Lines[line].GetElement(row));
+            _gfView.ElementsPool.Release(GetElement(line, row));
             _gfModel.Elements[line][row] = null;
         }
         
@@ -61,6 +75,14 @@ public class GameFieldController : Controller
             _gfView.Lines[lineIndexes[i]].AnimateNewElements(sequence[i]);
     }
 
+    // Забираем элемент из линии
+    private ElementView GetElement(int line, int index)
+    {
+        var element = _gfView.Lines[line].Elements[index];
+        _gfView.Lines[line].Elements[index] = null;
+        return element;
+    }
+    
     // Берем новый элемент для линии и передаем его
     private void GetNewElement(int lineIndex)
     {
@@ -98,4 +120,30 @@ public class GameFieldController : Controller
         }
         return sequences;
     }
+
+    #region WorkWithModel
+
+    /// <summary>
+    /// Создаем модель линии при необходимости
+    /// </summary>
+    /// <param name="line">View линии</param>
+    private void CreateLine(LineView line)
+    {
+        int id = _gfModel.Lines.Count;
+        _gfModel.Lines.Add(new LineModel(line, id));
+    }
+    
+    /// <summary>
+    /// Удаление элементов на случай переполнения пула ElementView, которые после возвращения в пул будут удаляться
+    /// </summary>
+    /// <param name="id">Id элемента</param>
+    private void DestroyElement(int id) => _gfModel.ElementsPool.Remove(id);
+    
+    /// <summary>
+    /// Создаем модель элемента при необходимости
+    /// </summary>
+    /// <param name="view">View элемента</param>
+    private void NewElement(ElementView view) => _gfModel.ElementsPool.Add(view.Id, new ElementModel(view, _data.GetRandomElement(), view.Id));
+
+    #endregion
 }

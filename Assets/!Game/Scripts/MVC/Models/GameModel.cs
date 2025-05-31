@@ -30,7 +30,7 @@ public class GameModel : Model
         }
     }
     
-    private int StepCost => _data.StepCost + _playerStep;
+    public int StepCost => _data.StepCost + _playerStep;
     private event Action<int> ScoreChanged;
     private event Action<int, int> StepsChanged;
     

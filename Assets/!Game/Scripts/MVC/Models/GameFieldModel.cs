@@ -23,9 +23,6 @@ public class GameFieldModel : Model
         _lines = new List<LineModel>(data.ColumnsCount);
         _elementsPool = new Dictionary<int, ElementModel>(data.FieldSize);
         
-        view.ElementViewCreate += NewElement;
-        view.ElementViewDestroy += DestroyElement;
-        view.LineViewCreate += CreateLine;
         view.ElementViewGet += SetModel;
     }
 
@@ -48,18 +45,5 @@ public class GameFieldModel : Model
         int emptySlot = _elements[listIndex].FindIndex(x => x == null);
         _elements[listIndex][emptySlot] = model;
     }
-    
-    // Создаем модель линии при необходимости
-    private void CreateLine(LineView line)
-    {
-        int id = _lines.Count;
-        _lines.Add(new LineModel(line, id));
-    }
 
-    // Создаем модель элемента при необходимости
-    private void NewElement(ElementView view) =>
-        _elementsPool.Add(view.Id, new ElementModel(view, _data.GetRandomElement(), view.Id));
-
-    // Удаление элементов на случай переполнения пула ElementView, которые после возвращения в пул будут удаляться
-    private void DestroyElement(int id) => _elementsPool.Remove(id);
 }

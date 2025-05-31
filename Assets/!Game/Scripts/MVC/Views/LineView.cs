@@ -1,10 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class LineView : View
 {
@@ -100,14 +98,6 @@ public class LineView : View
     private Tween Animate(ElementView element, int indexPos)
     {
         return element.RectTransform.DOMove(_elementPositions[indexPos], _animationTime);
-    }
-    
-    // Забираем элемент из линии
-    public ElementView GetElement(int index)
-    {
-        var element = Elements[index];
-        Elements[index] = null;
-        return element;
     }
     
     // Добавляем новый элемент

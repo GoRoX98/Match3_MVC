@@ -27,9 +27,12 @@ public class GameFieldView : View
     public event Action<ElementView> ElementViewGet; 
     // Событие уведомляет об уничтожении экземпляра ElementView
     public event Action<int> ElementViewDestroy;
-
-    // Инициализируем вьюху и пул ElementView
-    // Инициализируем линии, передаем им элементы
+    
+    /// <summary>
+    /// Инициализируем вьюху и пул ElementView. Инициализируем линии, передаем им элементы
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="OnElementClick"></param>
     public void Init(LevelData data, Action<int> OnElementClick)
     {
         if (_isInit) return;
@@ -73,13 +76,12 @@ public class GameFieldView : View
         
         _isInit = true;
     }
-
+    
     #region Pool
     private void OnElementGet(ElementView element)
     {
         element.Activate();
     }
-
 
     private void OnReleaseElement(ElementView element)
     {
