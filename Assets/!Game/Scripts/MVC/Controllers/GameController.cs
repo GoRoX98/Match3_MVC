@@ -19,18 +19,12 @@ public class GameController : Controller
         _gameView.ChangeScene += ChangeScene;
         _gameProcess.GetStep += MakeStep;
         _gameProcess.EndStep += AddScore;
-        GameEntryPoint.Restart += RestartLevel;
+        GameEntryPoint.Restart += OnRestart;
     }
 
     private void ChangeScene(int index) => SceneManager.LoadScene(index);
 
-    private void RestartLevel()
-    {
-        LevelData data = _gameModel.Data;
-        _gameModel = new GameModel(_gameView, data);
-        _gameView.OnScoreChange(_gameModel.CurrentScore);
-        _gameView.OnStepsChange(_gameModel.CurrentSteps, _gameModel.StepCost);
-    }
+    private void OnRestart() => _gameModel.Restart();
 
     private void AddScore(int count) => _gameModel.ChangeScore(count);
 

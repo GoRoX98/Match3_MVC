@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -63,6 +64,13 @@ public class GameFieldView : View
             true, data.FieldSize + 10, data.FieldSize + 20
             );
 
+        InitLines(data);
+        
+        _isInit = true;
+    }
+
+    public void InitLines(LevelData data, bool restart = false)
+    {
         foreach (var line in _lines)
         {
             for (int i = 0; i < data.RowsCount; i++)
@@ -71,10 +79,11 @@ public class GameFieldView : View
                 line.AddNewElement(view);
                 ElementViewGet?.Invoke(view);
             }
-            StartCoroutine(line.AnimateInit());
+            if (!restart)
+                StartCoroutine(line.AnimateInit());
+            else
+                line.AnimateNewElements(DOTween.Sequence().AppendInterval(0.1f));
         }
-        
-        _isInit = true;
     }
     
     #region Pool

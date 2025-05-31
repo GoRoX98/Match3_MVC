@@ -44,6 +44,14 @@ public class GameModel : Model
         StepsChanged += view.OnStepsChange;
     }
 
+    public void Restart()
+    {
+        CurrentSteps = _data.StartSteps;
+        CurrentScore = 0;
+        _playerStep = 0;
+        UpdateUI();
+    }
+    
     // Добавляем очки и ходы
     public void ChangeScore(int count)
     {

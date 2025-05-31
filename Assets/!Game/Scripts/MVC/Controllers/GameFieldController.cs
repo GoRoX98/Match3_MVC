@@ -27,6 +27,11 @@ public class GameFieldController : Controller
     /// <param name="gameProcess">Сервис игрового процесса</param>
     public GameFieldController(GameFieldModel model, GameFieldView view, LevelData data, GameProcess gameProcess) : base(model, view)
     {
+        GameEntryPoint.Restart += OnRestart;
+        view.ElementViewCreate += NewElement;
+        view.ElementViewDestroy += DestroyElement;
+        view.LineViewCreate += CreateLine;
+        
         _gameProcess = gameProcess;
         _gfView = view;
         _gfModel = model;
@@ -36,15 +41,19 @@ public class GameFieldController : Controller
         _gfView.Init(_data, OnElementClick);
         
         _analyzer = new AnalyzeMatch();
-        GameEntryPoint.Restart += RestartGame;
-        view.ElementViewCreate += NewElement;
-        view.ElementViewDestroy += DestroyElement;
-        view.LineViewCreate += CreateLine;
     }
 
-    private void RestartGame()
+    private void OnRestart()
     {
-        throw new NotImplementedException();
+        for (int i = 0; i < _gfView.Lines.Count; i++)
+        {
+            for (int b = 0; b < _gfView.Lines[i].Elements.Count; b++)
+                _gfView.ElementsPool.Release(GetElement(i, b));
+        }
+        
+        _gfModel.Restart();
+        _gfView.InitLines(_gfModel.Data, true);
+        Debug.Log("Restart");
     }
 
     // Обработка нажатия на элемента

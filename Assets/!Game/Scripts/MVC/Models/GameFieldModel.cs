@@ -26,6 +26,13 @@ public class GameFieldModel : Model
         view.ElementViewGet += SetModel;
     }
 
+    public void Restart()
+    {
+        _elements.Clear();
+        for (int i = 0; i < _data.ColumnsCount; i++) 
+            _elements.Add(new List<ElementModel>(_data.RowsCount));
+    }
+    
     // Заполняем поле элементами
     public void SetModel(ElementView view)
     {
